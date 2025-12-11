@@ -18,7 +18,7 @@ namespace Notifications.Api.Controllers
 		[HttpPost("welcome")]
 		public async Task<IActionResult> SendWelcomeEmail([FromBody] UserCreatedEvent request)
 		{
-			await _emailService.SendWelcomeEmailAsync(request.FullName, request.Email);
+			await _emailService.SendWelcomeEmailAsync(request.Nome, request.Email);
 			return Ok(new { message = "E-mail de boas-vindas enviado (simulado)." });
 		}
 

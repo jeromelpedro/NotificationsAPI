@@ -7,6 +7,7 @@
 		public string Password { get; set; }
 		public int Port { get; set; }
 		public string ExchangeName { get; set; }
-		public string QueueName { get; set; }
+		public string QueueNameUserCreated { get; set; }
+		public string QueueNamePaymentProcessed { get; set; }
 	}
 }

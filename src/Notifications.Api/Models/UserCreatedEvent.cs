@@ -2,9 +2,8 @@
 {
 	public class UserCreatedEvent
 	{
-		public Guid UserId { get; set; }
-		public string FullName { get; set; }
-		public string Email { get; set; }
-		public DateTime CreatedAt { get; set; }
+		public Guid Id { get; set; }
+		public string Nome { get; set; }
+		public string Email { get; set; }		
 	}
 }
