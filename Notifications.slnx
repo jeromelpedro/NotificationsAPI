@@ -2,5 +2,7 @@
   <Folder Name="/src/">
     <Project Path="src/Notifications.Api/Notifications.Api.csproj" />
   </Folder>
-  <Folder Name="/tests/" />
+  <Folder Name="/tests/">
+    <Project Path="tests/Notifications.Tests/Notifications.Tests.csproj" Id="55566392-eea7-49a5-8a42-55715fded307" />
+  </Folder>
 </Solution>
