@@ -17,10 +17,8 @@ namespace Notifications.Api.Consumers
 		{
 			var message = context.Message;
 
-			if (message.Status == "Approved")
-			{
-				await _emailService.SendOrderConfirmationAsync(message.UserEmail, message.OrderId, message.Amount);
-			}
+			if (message.Status == PaymentStatus.Approved)
+				await _emailService.SendOrderConfirmationAsync(message.EmailUser, message.OrderId, message.Price);
 		}
 	}
 }

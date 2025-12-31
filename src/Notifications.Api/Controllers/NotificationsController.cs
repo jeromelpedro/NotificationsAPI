@@ -25,9 +25,9 @@ namespace Notifications.Api.Controllers
 		[HttpPost("confirmation")]
 		public async Task<IActionResult> SendOrderConfirmation([FromBody] PaymentProcessedEvent request)
 		{
-			if (request.Status?.Equals("Approved", StringComparison.OrdinalIgnoreCase) == true)
+			if (request.Status == PaymentStatus.Approved)
 			{
-				await _emailService.SendOrderConfirmationAsync(request.UserEmail, request.OrderId, request.Amount);
+				await _emailService.SendOrderConfirmationAsync(request.EmailUser, request.OrderId, request.Price);
 				return Ok(new { message = "E-mail de confirmação enviado (simulado)." });
 			}
 			return BadRequest(new { message = "Pagamento não aprovado, e-mail não enviado." });

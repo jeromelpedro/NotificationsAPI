@@ -1,11 +1,16 @@
 ﻿namespace Notifications.Api.Models
 {
+	public enum PaymentStatus
+	{
+		Approved,
+		Rejected
+	}
 	public class PaymentProcessedEvent
 	{
 		public Guid OrderId { get; set; }
 		public Guid UserId { get; set; }
-		public string UserEmail { get; set; }
-		public decimal Amount { get; set; }
-		public string Status { get; set; } // "Approved", "Declined"
+		public string EmailUser { get; set; }
+		public decimal Price { get; set; }
+		public PaymentStatus Status { get; set; } // "Approved", "Declined"
 	}
 }
