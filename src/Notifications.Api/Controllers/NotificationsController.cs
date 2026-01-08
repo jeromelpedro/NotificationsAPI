@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Notifications.Api.Models;
 using Notifications.Api.Services.Interfaces;
 
@@ -6,6 +7,7 @@ namespace Notifications.Api.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
+	[Authorize]
 	public class NotificationsController : ControllerBase
 	{
 		private readonly IEmailService _emailService;

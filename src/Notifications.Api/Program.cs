@@ -5,12 +5,11 @@ using Notifications.Api.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
-
 builder.Services.AddRabbitMqConfiguration(builder.Configuration);
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthConfiguration(builder.Configuration);
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 
@@ -19,6 +18,7 @@ var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI();
 
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapGet("/", () => "NotificationsAPI is running on port 5056...");
