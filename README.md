@@ -1,4 +1,4 @@
-# Notifications API
+# FIAP Cloud Games - Notifications API
 
 Microsserviço de Notificações (NotificationsAPI): responsável por receber eventos via RabbitMQ e enviar (simulado via logs) e-mails de boas-vindas e de confirmação de compra.
 
