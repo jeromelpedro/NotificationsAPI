@@ -60,9 +60,10 @@ namespace Notifications.Api.Configurations
 
 						e.ConfigureConsumer<PaymentProcessedConsumer>(context);
 
+						var routingKey = settings.QueueNamePaymentProcessed.Split('-')[0];
 						e.Bind(settings.ExchangeName, s =>
 						{
-							s.RoutingKey = settings.QueueNamePaymentProcessed;
+							s.RoutingKey = routingKey;
 							s.ExchangeType = "topic";
 						});
 					});

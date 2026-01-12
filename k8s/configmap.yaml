@@ -13,4 +13,4 @@ data:
   RabbitMq__Port: "5672"
   RabbitMq__ExchangeName: "cloudgames.topic"
   RabbitMq__QueueNameOrderPlaced: "OrderPlacedEvent"
-  RabbitMq__QueueNamePaymentProcessed: "PaymentProcessedEvent"
+  RabbitMq__QueueNamePaymentProcessed: "PaymentProcessedEvent-Notifications"
