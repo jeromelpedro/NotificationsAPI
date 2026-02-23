@@ -13,6 +13,33 @@ namespace Notifications.Api.Configurations
 
 			services.AddMassTransit(x =>
 			{
+				x.UsingRabbitMq((context, cfg) =>
+				{
+					var settings = context.GetRequiredService<IOptions<RabbitMqSettings>>().Value;
+
+					var uri = new Uri($"rabbitmq://{settings.HostName}:{settings.Port}/");
+
+					cfg.Host(uri, h =>
+					{
+						h.Username(settings.UserName);
+						h.Password(settings.Password);
+					});
+
+					cfg.Publish<UserCreatedEvent>(p => p.Exclude = true);
+					cfg.Publish<PaymentProcessedEvent>(p => p.Exclude = true);
+				});
+			});
+
+			return services;
+		}
+
+		[Obsolete("Legacy consumers are moved to Azure Functions. Call only for compatibility testing.")]
+		public static IServiceCollection AddRabbitMqLegacyConsumers(this IServiceCollection services, IConfiguration configuration)
+		{
+			services.Configure<RabbitMqSettings>(configuration.GetSection("RabbitMq"));
+
+			services.AddMassTransit(x =>
+			{
 				x.AddConsumer<UserCreatedConsumer>();
 				x.AddConsumer<PaymentProcessedConsumer>();
 
