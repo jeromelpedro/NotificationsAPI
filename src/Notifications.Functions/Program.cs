@@ -8,20 +8,19 @@ using Notifications.Functions.Services;
 var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
-// Garante que a configuração está completamente carregada antes de montar a string
+
 builder.Configuration.AddEnvironmentVariables();
 
-var config = builder.Configuration;
-var rabbitHost = config["RabbitMq__HostName"];
-var rabbitPort = config["RabbitMq__Port"] ?? "5672";
-var rabbitUser = config["RabbitMq__UserName"];
-var rabbitPass = config["RabbitMq__Password"];
+var rabbitHost = Environment.GetEnvironmentVariable("RabbitMq__HostName");
+var rabbitPort = Environment.GetEnvironmentVariable("RabbitMq__Port");
+var rabbitUser = Environment.GetEnvironmentVariable("RabbitMq__UserName");
+var rabbitPass = Environment.GetEnvironmentVariable("RabbitMq__Password");
 
-if (!string.IsNullOrEmpty(rabbitHost))
-{
-	var connectionString = $"amqp://{rabbitUser}:{rabbitPass}@{rabbitHost}:{rabbitPort}";
-	builder.Configuration["RabbitMqConnection"] = connectionString;
-}
+var connectionString = $"amqp://{rabbitUser}:{rabbitPass}@{rabbitHost}:{rabbitPort}";
+builder.Configuration["RabbitMqConnection"] = connectionString;
+
+Console.WriteLine($"[DEBUG] RabbitMQ connection string: {connectionString}");
+
 
 builder.Services
 	.AddApplicationInsightsTelemetryWorkerService()
