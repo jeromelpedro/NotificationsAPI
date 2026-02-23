@@ -9,7 +9,8 @@ namespace Notifications.Functions.Functions
 	public class UserCreatedFunction(IEmailService _emailService, ILogger<UserCreatedFunction> _logger)
 	{
 		[Function("UserCreatedFunction")]
-		public async Task Run([RabbitMQTrigger("%RabbitMq:QueueNameUserCreated%", ConnectionStringSetting = "RabbitMqConnection")] byte[] body)
+		public async Task Run([RabbitMQTrigger(queueName: "UserCreatedEvent", 
+			ConnectionStringSetting = "amqp://guest:guest@cloudgames-rabbitmq:5672")] byte[] body)
 		{
 			var payload = System.Text.Encoding.UTF8.GetString(body);
 			var @event = JsonSerializer.Deserialize<UserCreatedEvent>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
