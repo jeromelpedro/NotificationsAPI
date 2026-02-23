@@ -1,25 +1,23 @@
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
-WORKDIR /app
-EXPOSE 5056
+FROM mcr.microsoft.com/azure-functions/dotnet-isolated:4-dotnet-isolated9.0 AS base
+WORKDIR /home/site/wwwroot
+EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Ajuste do caminho conforme sua imagem: src/Notifications.Api
-COPY ["src/Notifications.Api/Notifications.Api.csproj", "src/Notifications.Api/"]
-
-RUN dotnet restore "./src/Notifications.Api/Notifications.Api.csproj"
+COPY ["src/Notifications.Functions/Notifications.Functions.csproj", "src/Notifications.Functions/"]
+RUN dotnet restore "src/Notifications.Functions/Notifications.Functions.csproj"
 
 COPY . .
-WORKDIR "/src/src/Notifications.Api"
-RUN dotnet build "./Notifications.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/src/Notifications.Functions"
+RUN dotnet build "Notifications.Functions.csproj" -c Release -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Notifications.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "Notifications.Functions.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
-WORKDIR /app
+WORKDIR /home/site/wwwroot
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Notifications.Api.dll"]
+
+ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
+    AzureFunctionsJobHost__Logging__Console__IsEnabled=true
