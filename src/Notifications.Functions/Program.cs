@@ -1,5 +1,6 @@
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Notifications.Functions.Services;
@@ -7,17 +8,20 @@ using Notifications.Functions.Services;
 var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
+// Garante que a configuração está completamente carregada antes de montar a string
+builder.Configuration.AddEnvironmentVariables();
 
-// Monta a connection string a partir dos fragmentos
 var config = builder.Configuration;
-var host = config["RabbitMq__HostName"];
-var port = config["RabbitMq__Port"];
-var user = config["RabbitMq__UserName"];
-var pass = config["RabbitMq__Password"];
-var connectionString = $"amqp://{user}:{pass}@{host}:{port}";
+var rabbitHost = config["RabbitMq__HostName"];
+var rabbitPort = config["RabbitMq__Port"] ?? "5672";
+var rabbitUser = config["RabbitMq__UserName"];
+var rabbitPass = config["RabbitMq__Password"];
 
-// Injeta como a chave que o trigger espera
-builder.Configuration["RabbitMqConnection"] = connectionString;
+if (!string.IsNullOrEmpty(rabbitHost))
+{
+	var connectionString = $"amqp://{rabbitUser}:{rabbitPass}@{rabbitHost}:{rabbitPort}";
+	builder.Configuration["RabbitMqConnection"] = connectionString;
+}
 
 builder.Services
 	.AddApplicationInsightsTelemetryWorkerService()
