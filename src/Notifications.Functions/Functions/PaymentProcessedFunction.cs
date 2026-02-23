@@ -6,20 +6,11 @@ using System.Text.Json;
 
 namespace Notifications.Functions.Functions
 {
-	public class PaymentProcessedFunction
-	{
-		private readonly IEmailService _emailService;
-		private readonly ILogger<PaymentProcessedFunction> _logger;
-
-		public PaymentProcessedFunction(IEmailService emailService, ILogger<PaymentProcessedFunction> logger)
-		{
-			_emailService = emailService;
-			_logger = logger;
-		}
+	public class PaymentProcessedFunction(IEmailService _emailService, ILogger<PaymentProcessedFunction> _logger)
+	{		
 
 		[Function("PaymentProcessedFunction")]
-		public async Task Run([
-			RabbitMQTrigger("%RabbitMq:QueueNamePaymentProcessed%", ConnectionStringSetting = "RabbitMqConnection")] byte[] body)
+		public async Task Run([RabbitMQTrigger("%RabbitMq:QueueNamePaymentProcessed%", ConnectionStringSetting = "RabbitMqConnection")] byte[] body)
 		{
 			var payload = System.Text.Encoding.UTF8.GetString(body);
 			var @event = JsonSerializer.Deserialize<PaymentProcessedEvent>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });

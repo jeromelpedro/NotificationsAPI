@@ -8,6 +8,17 @@ var builder = FunctionsApplication.CreateBuilder(args);
 
 builder.ConfigureFunctionsWebApplication();
 
+// Monta a connection string a partir dos fragmentos
+var config = builder.Configuration;
+var host = config["RabbitMq__HostName"];
+var port = config["RabbitMq__Port"];
+var user = config["RabbitMq__UserName"];
+var pass = config["RabbitMq__Password"];
+var connectionString = $"amqp://{user}:{pass}@{host}:{port}";
+
+// Injeta como a chave que o trigger espera
+builder.Configuration["RabbitMqConnection"] = connectionString;
+
 builder.Services
 	.AddApplicationInsightsTelemetryWorkerService()
 	.ConfigureFunctionsApplicationInsights();

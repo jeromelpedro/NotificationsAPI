@@ -6,20 +6,10 @@ using System.Text.Json;
 
 namespace Notifications.Functions.Functions
 {
-	public class UserCreatedFunction
+	public class UserCreatedFunction(IEmailService _emailService, ILogger<UserCreatedFunction> _logger)
 	{
-		private readonly IEmailService _emailService;
-		private readonly ILogger<UserCreatedFunction> _logger;
-
-		public UserCreatedFunction(IEmailService emailService, ILogger<UserCreatedFunction> logger)
-		{
-			_emailService = emailService;
-			_logger = logger;
-		}
-
 		[Function("UserCreatedFunction")]
-		public async Task Run([
-			RabbitMQTrigger("%RabbitMq:QueueNameUserCreated%", ConnectionStringSetting = "RabbitMqConnection")] byte[] body)
+		public async Task Run([RabbitMQTrigger("%RabbitMq:QueueNameUserCreated%")] byte[] body)
 		{
 			var payload = System.Text.Encoding.UTF8.GetString(body);
 			var @event = JsonSerializer.Deserialize<UserCreatedEvent>(payload, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -33,5 +23,6 @@ namespace Notifications.Functions.Functions
 			_logger.LogInformation("UserCreatedFunction received event for {Email}", @event.Email);
 			await _emailService.SendWelcomeEmailAsync(@event.Nome, @event.Email);
 		}
+
 	}
 }
