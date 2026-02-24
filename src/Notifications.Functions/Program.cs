@@ -11,16 +11,13 @@ builder.ConfigureFunctionsWebApplication();
 
 builder.Configuration.AddEnvironmentVariables();
 
-var rabbitHost = Environment.GetEnvironmentVariable("RabbitMq__HostName");
-var rabbitPort = Environment.GetEnvironmentVariable("RabbitMq__Port");
-var rabbitUser = Environment.GetEnvironmentVariable("RabbitMq__UserName");
-var rabbitPass = Environment.GetEnvironmentVariable("RabbitMq__Password");
+var rabbitHost = builder.Configuration["RabbitMq:HostName"];
+var rabbitPort = builder.Configuration["RabbitMq:Port"];
+var rabbitUser = builder.Configuration["RabbitMq:UserName"];
+var rabbitPass = builder.Configuration["RabbitMq:Password"];
 
 var connectionString = $"amqp://{rabbitUser}:{rabbitPass}@{rabbitHost}:{rabbitPort}";
 builder.Configuration["RabbitMqConnection"] = connectionString;
-
-Console.WriteLine($"[DEBUG] RabbitMQ connection string: {connectionString}");
-
 
 builder.Services
 	.AddApplicationInsightsTelemetryWorkerService()
