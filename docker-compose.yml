@@ -21,9 +21,10 @@ services:
       - RabbitMq__Port=5672
       - RabbitMq__UserName=guest
       - RabbitMq__Password=guest
+      - RabbitMq__ExchangeName=cloudgames.topic
 
       - RabbitMq__QueueNameUserCreated=UserCreatedEvent
-      - RabbitMq__QueueNamePaymentProcessed=PaymentProcessedEvent
+      - RabbitMq__QueueNamePaymentProcessed=PaymentProcessedEvent-Notifications
     ports:
       - "7071:80"
     depends_on:
