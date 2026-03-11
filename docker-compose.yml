@@ -26,29 +26,9 @@ services:
       - RabbitMq__QueueNameUserCreated=UserCreatedEvent
       - RabbitMq__QueueNamePaymentProcessed=PaymentProcessedEvent-Notifications
     ports:
-<<<<<<< HEAD
-      - "5056:5056"
-    environment:
-      ASPNETCORE_ENVIRONMENT: Production
-      ASPNETCORE_URLS: "http://+:5056"
-
-      Jwt__Key: "chave-secreta-super-forte-123456"
-      Jwt__Issuer: "CloudGamesAPI"
-      Jwt__Audience: "CloudGamesAPIClient"
-
-      RabbitMq__HostName: "cloudgames-rabbitmq" 
-      RabbitMq__Port: "5672"
-      RabbitMq__UserName: "guest"
-      RabbitMq__Password: "guest"
-      RabbitMq__ExchangeName: "cloudgames.topic"
-      RabbitMq__QueueNameUserCreated: "UserCreatedEvent"
-      RabbitMq__QueueNamePaymentProcessed: "PaymentProcessedEvent-Notifications"
-
-=======
       - "7071:80"
     depends_on:
       - azurite
->>>>>>> feature/logsTraces-Functions
     networks:
       - cloudgames-network
 
