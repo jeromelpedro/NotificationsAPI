@@ -1,7 +1,9 @@
+using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Notifications.Functions.Models;
 using Notifications.Functions.Services;
+using System.Text.Json;
 
 namespace Notifications.Functions.Functions
 {
@@ -9,23 +11,31 @@ namespace Notifications.Functions.Functions
     {
         [Function("PaymentProcessedFunction")]
         public async Task Run(
-            [RabbitMQTrigger("%RabbitMq:QueueNamePaymentProcessed%", ConnectionStringSetting = "RabbitMqConnection")] PaymentProcessedEvent @event)
+			[ServiceBusTrigger("%QueueNamePaymentProcessed%", Connection = "AzureServiceBus")]
+			ServiceBusReceivedMessage message,
+			ServiceBusMessageActions messageActions)
         {
-            if (@event is null)
+
+			var mensagem = JsonSerializer.Deserialize<PaymentProcessedEvent>(message.Body);
+
+
+            if (mensagem is null)
             {
                 _logger.LogWarning("PaymentProcessedFunction received null payload");
                 return;
             }
 
-            _logger.LogInformation("PaymentProcessedFunction received event for order {OrderId}", @event.OrderId);
+            _logger.LogInformation("PaymentProcessedFunction received event for order {OrderId}", mensagem.OrderId);
 
-            if (@event.Status == PaymentStatus.Approved)
+            if (mensagem.Status == PaymentStatus.Approved)
             {
                 await _emailService.SendOrderConfirmationAsync(
-                    @event.EmailUser,
-                    @event.OrderId,
-                    @event.Price);
+					mensagem.EmailUser,
+					mensagem.OrderId,
+					mensagem.Price);
             }
-        }
+
+			await messageActions.CompleteMessageAsync(message);
+		}
     }
 }

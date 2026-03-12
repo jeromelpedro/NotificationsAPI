@@ -1,7 +1,9 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/Notifications.Api/Notifications.Api.csproj" />
-    <Project Path="src/Notifications.Functions/Notifications.Functions.csproj" Id="9a716d27-6c12-4ba9-b998-f5c3ffc08d20" />
+    <Project Path="src/Notifications.Functions/Notifications.Functions.csproj" Id="9a716d27-6c12-4ba9-b998-f5c3ffc08d20">
+      <Build Solution="Debug|*" Project="false" />
+    </Project>
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Notifications.Tests/Notifications.Tests.csproj" Id="55566392-eea7-49a5-8a42-55715fded307" />
