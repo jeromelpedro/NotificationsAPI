@@ -11,13 +11,11 @@ namespace Notifications.Functions.Functions
     {
         [Function("PaymentProcessedFunction")]
         public async Task Run(
-			[ServiceBusTrigger("%QueueNamePaymentProcessed%", "%SubscriptionPaymentProcessed%", Connection = "AzureServiceBus")]
+			[ServiceBusTrigger(topicName:"%QueueNamePaymentProcessed%", subscriptionName: "%SubscriptionPaymentProcessed%", Connection = "AzureServiceBus")]
 			ServiceBusReceivedMessage message,
 			ServiceBusMessageActions messageActions)
         {
-
 			var mensagem = JsonSerializer.Deserialize<PaymentProcessedEvent>(message.Body);
-
 
             if (mensagem is null)
             {
