@@ -11,7 +11,7 @@ namespace Notifications.Functions.Functions
     {
         [Function("PaymentProcessedFunction")]
         public async Task Run(
-			[ServiceBusTrigger("%QueueNamePaymentProcessed%", Connection = "AzureServiceBus")]
+			[ServiceBusTrigger("%QueueNamePaymentProcessed%", "%SubscriptionPaymentProcessed%", Connection = "AzureServiceBus")]
 			ServiceBusReceivedMessage message,
 			ServiceBusMessageActions messageActions)
         {
