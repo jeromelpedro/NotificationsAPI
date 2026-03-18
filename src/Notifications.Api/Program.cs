@@ -1,10 +1,24 @@
+using Microsoft.ApplicationInsights.Extensibility;
+using OpenTelemetry.Trace;
 using Notifications.Api.Configurations;
 using Notifications.Api.Services;
 using Notifications.Api.Services.Interfaces;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables();
+builder.Services.AddApplicationInsightsTelemetry();
+
+builder.Host.UseSerilog((_, services, loggerConfiguration) => loggerConfiguration
+	.MinimumLevel.Information()
+	.Enrich.FromLogContext()
+	.Enrich.With(new Notifications.Api.Serilog.ActivityEnricher())
+	.WriteTo.Console()
+	.WriteTo.ApplicationInsights(
+		services.GetRequiredService<TelemetryConfiguration>(),
+		TelemetryConverter.Traces));
+
 builder.Services.AddRabbitMqConfiguration(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
