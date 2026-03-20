@@ -28,7 +28,6 @@ namespace Notifications.Functions.Services
 			_logger.LogInformation(
 				"--------------------------------------------------\n" +
 				"[EMAIL SERVICE - {Type}]\n" +
-				"  CorrelationId : {CorrelationId}\n" +
 				"  To            : {Email}\n" +
 				"  Subject       : {Subject}\n" +
 				"  Body          : {Body}\n" +

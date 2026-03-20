@@ -1,6 +1,5 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Notifications.Functions.Helpers;
 using Notifications.Functions.Models;
@@ -9,7 +8,7 @@ using System.Text.Json;
 
 namespace Notifications.Functions.Functions
 {
-	public class UserCreatedFunction(IEmailService _emailService, IConfiguration configuration, ILogger<UserCreatedFunction> _logger)
+	public class UserCreatedFunction(IEmailService _emailService, ILogger<UserCreatedFunction> _logger)
 	{
 		[Function("UserCreatedFunction")]
 		public async Task Run(
