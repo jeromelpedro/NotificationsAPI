@@ -34,7 +34,7 @@ namespace Notifications.Functions.Functions
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError(ex, "PaymentProcessedFunction failed to deserialize message. CorrelationId: {CorrelationId}", correlationId);
+					_logger.LogError(ex, "PaymentProcessedFunction failed to deserialize message.");
 
 					await messageActions.AbandonMessageAsync(message);
 					return;
@@ -42,19 +42,18 @@ namespace Notifications.Functions.Functions
 
 				if (mensagem is null)
 				{
-					_logger.LogWarning("PaymentProcessedFunction received null payload. CorrelationId: {CorrelationId}",correlationId);
+					_logger.LogWarning("PaymentProcessedFunction received null payload.");
 					return;
 				}
 
-				_logger.LogInformation("PaymentProcessedFunction received event for order {OrderId}. CorrelationId: {CorrelationId}",mensagem.OrderId,correlationId);
+				_logger.LogInformation("PaymentProcessedFunction received event for order {OrderId}",mensagem.OrderId);
 
 				if (mensagem.Status == PaymentStatus.Approved)
 				{
 					await _emailService.SendOrderConfirmationAsync(
 						mensagem.EmailUser,
 						mensagem.OrderId,
-						mensagem.Price,
-						correlationId);
+						mensagem.Price);
 				}
 
 				await messageActions.CompleteMessageAsync(message);

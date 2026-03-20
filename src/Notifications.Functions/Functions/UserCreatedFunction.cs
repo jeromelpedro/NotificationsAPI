@@ -32,7 +32,7 @@ namespace Notifications.Functions.Functions
 				}
 				catch (Exception ex)
 				{
-					_logger.LogError(ex,"UserCreatedFunction failed to deserialize message. CorrelationId: {CorrelationId}",correlationId);
+					_logger.LogError(ex,"UserCreatedFunction failed to deserialize message.");
 					
 					await messageActions.AbandonMessageAsync(message);
 					return;
@@ -40,13 +40,13 @@ namespace Notifications.Functions.Functions
 
 				if (mensagem is null)
 				{
-					_logger.LogWarning("UserCreatedFunction received null payload. CorrelationId: {CorrelationId}",correlationId);
+					_logger.LogWarning("UserCreatedFunction received null payload.");
 					return;
 				}
 
-				_logger.LogInformation("UserCreatedFunction received event for {Email}. CorrelationId: {CorrelationId}",mensagem.Email,correlationId);
+				_logger.LogInformation("UserCreatedFunction received event for {Email}",mensagem.Email);
 
-				await _emailService.SendWelcomeEmailAsync(mensagem.Nome, mensagem.Email, correlationId);
+				await _emailService.SendWelcomeEmailAsync(mensagem.Nome, mensagem.Email);
 
 				await messageActions.CompleteMessageAsync(message);
 			}

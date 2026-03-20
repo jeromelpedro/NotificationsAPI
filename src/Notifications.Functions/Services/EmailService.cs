@@ -4,26 +4,26 @@ namespace Notifications.Functions.Services
 {
     public class EmailService(ILogger<EmailService> _logger) : IEmailService
     {
-		public Task SendWelcomeEmailAsync(string fullName, string email, string correlationId)
+		public Task SendWelcomeEmailAsync(string fullName, string email)
 		{
 			var emailBody = $"Olá {fullName}, seja bem-vindo ao FIAP Cloud Games! Seu cadastro foi realizado com sucesso.";
-			LogEmail(email, "Bem-vindo!", emailBody, "WelcomeTemplate", correlationId);
+			LogEmail(email, "Bem-vindo!", emailBody, "WelcomeTemplate");
 			return Task.CompletedTask;
 		}
-		public Task SendOrderConfirmationAsync(string userEmail, Guid orderId, decimal amount, string correlationId)
+		public Task SendOrderConfirmationAsync(string userEmail, Guid orderId, decimal amount)
 		{
 			var emailBody = $"O pagamento do pedido {orderId} no valor de R$ {amount} foi APROVADO. Divirta-se!";
-			LogEmail(userEmail, "Compra Confirmada!", emailBody, "OrderConfirmationTemplate", correlationId);
+			LogEmail(userEmail, "Compra Confirmada!", emailBody, "OrderConfirmationTemplate");
 			return Task.CompletedTask;
 		}
 
-		public Task SendGenericEmailAsync(string to, string subject, string body, string correlationId)
+		public Task SendGenericEmailAsync(string to, string subject, string body)
 		{
-			LogEmail(to, subject, body, "GenericMessage", correlationId);
+			LogEmail(to, subject, body, "GenericMessage");
 			return Task.CompletedTask;
 		}
 
-		private void LogEmail(string to, string subject, string body, string type, string correlationId)
+		private void LogEmail(string to, string subject, string body, string type)
 		{
 			_logger.LogInformation(
 				"--------------------------------------------------\n" +
@@ -33,7 +33,7 @@ namespace Notifications.Functions.Services
 				"  Subject       : {Subject}\n" +
 				"  Body          : {Body}\n" +
 				"--------------------------------------------------",
-				type, correlationId, to, subject, body);			
+				type, to, subject, body);			
 		}
     }
 }
