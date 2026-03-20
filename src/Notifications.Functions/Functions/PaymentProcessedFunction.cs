@@ -1,39 +1,64 @@
 using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
+using Notifications.Functions.Helpers;
 using Notifications.Functions.Models;
 using Notifications.Functions.Services;
 using System.Text.Json;
 
 namespace Notifications.Functions.Functions
 {
-    public class PaymentProcessedFunction(IEmailService _emailService, ILogger<PaymentProcessedFunction> _logger)
-    {
-        [Function("PaymentProcessedFunction")]
-        public async Task Run(
-			[ServiceBusTrigger(topicName:"%QueueNamePaymentProcessed%", subscriptionName: "NotificationApi", Connection = "AzureServiceBus")]
+	public class PaymentProcessedFunction(IEmailService _emailService, ILogger<PaymentProcessedFunction> _logger)
+	{
+		[Function("PaymentProcessedFunction")]
+		public async Task Run(
+			[ServiceBusTrigger(
+				topicName: "%QueueNamePaymentProcessed%",
+				subscriptionName: "NotificationApi",
+				Connection = "AzureServiceBus")]
 			ServiceBusReceivedMessage message,
 			ServiceBusMessageActions messageActions)
-        {
-			var mensagem = JsonSerializer.Deserialize<PaymentProcessedEvent>(message.Body);
+		{
+			var correlationId = message.CorrelationIdGetOrCreate();
 
-            if (mensagem is null)
-            {
-                _logger.LogWarning("PaymentProcessedFunction received null payload");
-                return;
-            }
+			using (_logger.BeginScope(new Dictionary<string, object?>
+			{
+				["CorrelationId"] = correlationId
+			}))
+			{
+				PaymentProcessedEvent? mensagem = null;
 
-            _logger.LogInformation("PaymentProcessedFunction received event for order {OrderId}", mensagem.OrderId);
+				try
+				{
+					mensagem = JsonSerializer.Deserialize<PaymentProcessedEvent>(message.Body);
+				}
+				catch (Exception ex)
+				{
+					_logger.LogError(ex, "PaymentProcessedFunction failed to deserialize message. CorrelationId: {CorrelationId}", correlationId);
 
-            if (mensagem.Status == PaymentStatus.Approved)
-            {
-                await _emailService.SendOrderConfirmationAsync(
-					mensagem.EmailUser,
-					mensagem.OrderId,
-					mensagem.Price);
-            }
+					await messageActions.AbandonMessageAsync(message);
+					return;
+				}
 
-			await messageActions.CompleteMessageAsync(message);
+				if (mensagem is null)
+				{
+					_logger.LogWarning("PaymentProcessedFunction received null payload. CorrelationId: {CorrelationId}",correlationId);
+					return;
+				}
+
+				_logger.LogInformation("PaymentProcessedFunction received event for order {OrderId}. CorrelationId: {CorrelationId}",mensagem.OrderId,correlationId);
+
+				if (mensagem.Status == PaymentStatus.Approved)
+				{
+					await _emailService.SendOrderConfirmationAsync(
+						mensagem.EmailUser,
+						mensagem.OrderId,
+						mensagem.Price,
+						correlationId);
+				}
+
+				await messageActions.CompleteMessageAsync(message);
+			}
 		}
-    }
+	}
 }
