@@ -8,5 +8,10 @@
             },
             "enableLiveMetricsFilters": true
         }
+        ,
+        "logLevel": {
+            "default": "Information",
+            "Function": "Information"
+        }
     }
 }
