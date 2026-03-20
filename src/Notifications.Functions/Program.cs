@@ -15,6 +15,10 @@ builder.Services
 	.AddApplicationInsightsTelemetryWorkerService()
 	.ConfigureFunctionsApplicationInsights();
 
+builder.Services
+	.AddApplicationInsightsTelemetryWorkerService()
+	.ConfigureFunctionsApplicationInsights();
+
 builder.Services.AddSingleton<IEmailService, EmailService>();
 
-builder.Build().Run();
+await builder.Build().RunAsync();
