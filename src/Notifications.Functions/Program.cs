@@ -19,6 +19,9 @@ builder.Logging.SetMinimumLevel(LogLevel.Information);
 builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
 builder.Logging.AddFilter("System", LogLevel.Warning);
 
+// Ensure ILogger provider forwards logs to Application Insights
+builder.Logging.AddApplicationInsights();
+
 builder.Services
 	.AddApplicationInsightsTelemetryWorkerService()
 	.ConfigureFunctionsApplicationInsights();

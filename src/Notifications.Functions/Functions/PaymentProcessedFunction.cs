@@ -2,6 +2,7 @@ using Azure.Messaging.ServiceBus;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
 using Notifications.Functions.Helpers;
+using System.Diagnostics;
 using Notifications.Functions.Models;
 using Notifications.Functions.Services;
 using System.Text.Json;
@@ -20,6 +21,10 @@ namespace Notifications.Functions.Functions
 			ServiceBusMessageActions messageActions)
 		{
 			var correlationId = message.CorrelationIdGetOrCreate();
+
+			// Propagate correlation to Activity so Application Insights traces include it
+			Activity.Current?.SetTag("CorrelationId", correlationId);
+			Activity.Current?.AddBaggage("CorrelationId", correlationId);
 
 			using (_logger.BeginScope(new Dictionary<string, object?>
 			{
